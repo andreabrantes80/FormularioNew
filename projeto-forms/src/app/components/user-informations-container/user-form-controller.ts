@@ -30,7 +30,9 @@ export class UserFormController{
     return this.userForm.get('dependentsList') as FormArray;
   }
 
-  fullFillUserForm(user:IUser) {
+  fullFillUserForm(user: IUser) {
+    this.resetUserForm();
+
     this.fullFillGeneralInformations(user);
 
     this.fullFillPhoneList(user.phoneList);
@@ -40,6 +42,19 @@ export class UserFormController{
     this.fullFillDependentsList(user.dependentsList);
 
     console.log(this.userForm);
+  }
+  private resetUserForm() {
+    this.userForm.reset();
+
+    this.generalInformations.reset();
+    this.phoneList.reset();
+    this.phoneList.clear();
+
+    this.addressList.reset();
+    this.addressList.clear();
+
+    this.dependentsList.reset();
+    this.dependentsList.clear();
   }
 
 
@@ -84,7 +99,6 @@ export class UserFormController{
   private fullFillGeneralInformations(user: IUser) {
     this.generalInformations.patchValue(user);
 
-    console.log(this.userForm);
   }
 
   private createUserForm() {
