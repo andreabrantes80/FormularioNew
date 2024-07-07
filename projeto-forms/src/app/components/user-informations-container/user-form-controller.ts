@@ -6,8 +6,10 @@ import { AddressList } from "../../types/address-list";
 import { state } from "@angular/animations";
 import { DependentsList } from "../../types/dependents-list";
 
-export class UserFormController{
+export class UserFormController {
   userForm!: FormGroup;
+
+  private emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   private _fb = inject(FormBuilder);
 
@@ -16,17 +18,17 @@ export class UserFormController{
   }
 
   //criados este Alias para melhorar o código
-  get generalInformations(): FormGroup{
-     return this.userForm.get('generalInformations') as FormGroup;
+  get generalInformations(): FormGroup {
+    return this.userForm.get('generalInformations') as FormGroup;
   }
 
-  get phoneList(): FormArray{
+  get phoneList(): FormArray {
     return this.userForm.get('contactInformations.phoneList') as FormArray;
   }
-  get addressList(): FormArray{
+  get addressList(): FormArray {
     return this.userForm.get('contactInformations.addressList') as FormArray;
   }
-  get dependentsList(): FormArray{
+  get dependentsList(): FormArray {
     return this.userForm.get('dependentsList') as FormArray;
   }
 
@@ -57,31 +59,32 @@ export class UserFormController{
     this.dependentsList.clear();
   }
 
-
   private fullFillDependentsList(userDependentsList: DependentsList) {
     userDependentsList.forEach((dependent) => {
-      this.dependentsList.push(this._fb.group({
-        name: [dependent.name, Validators.required],
-        age: [dependent.age, Validators.required],
-        document: [dependent.document, Validators.required],
-      }));
+      this.dependentsList.push(
+        this._fb.group({
+          name: [dependent.name, Validators.required],
+          age: [dependent.age, Validators.required],
+          document: [dependent.document, Validators.required],
+        })
+      );
     });
   }
-
 
   private fullFillAddressList(userAddressList: AddressList) {
     userAddressList.forEach((address) => {
-      this.addressList.push(this._fb.group({
-        type: [address.type, Validators.required],
-        street: [address.street, Validators.required],
-        complement: [address.complement, Validators.required],
-        country: [address.country, Validators.required],
-        state: [address.state, Validators.required],
-        city: [address.city, Validators.required],
-      }));
+      this.addressList.push(
+        this._fb.group({
+          type: [address.type, Validators.required],
+          street: [address.street, Validators.required],
+          complement: [address.complement, Validators.required],
+          country: [address.country, Validators.required],
+          state: [address.state, Validators.required],
+          city: [address.city, Validators.required],
+        })
+      );
     });
   }
-
 
   private fullFillPhoneList(userPhoneList: PhoneList) {
     userPhoneList.forEach((phone) => {
@@ -98,14 +101,13 @@ export class UserFormController{
 
   private fullFillGeneralInformations(user: IUser) {
     this.generalInformations.patchValue(user);
-
   }
 
   private createUserForm() {
     this.userForm = this._fb.group({
       generalInformations: this._fb.group({
         name: ['', Validators.required],
-        email: ['', Validators.required],
+        email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
         country: ['', Validators.required],
         state: ['', Validators.required],
         maritalStatus: [null, Validators.required],

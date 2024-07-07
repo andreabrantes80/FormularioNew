@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-general-informations-edit',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./general-informations-edit.component.scss']
 })
 export class GeneralInformationsEditComponent {
+  @Input() userForm!: FormGroup;
 
+  get emailControl(): FormControl{
+    return this.userForm.get('generalInformations.email') as FormControl;
+  }
 }
