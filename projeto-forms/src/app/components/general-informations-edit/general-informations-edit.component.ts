@@ -4,10 +4,13 @@ import {
   OnChanges,
   SimpleChanges,
   OnInit,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { CountriesList } from '../../types/countries-list';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { StatesList } from '../../types/states-list';
 
 @Component({
   selector: 'app-general-informations-edit',
@@ -16,16 +19,24 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 })
 export class GeneralInformationsEditComponent implements OnInit, OnChanges {
   countriesListFiltered: CountriesList = [];
+  statesListFiltered: StatesList = [];
+
   @Input() userForm!: FormGroup;
   @Input() countriesList: CountriesList = [];
+  @Input() statesList: StatesList = [];
+
+  @Output('onCountrySelected') onCountrySelectedEmitt = new EventEmitter<string>();
 
   ngOnInit() {
     this.watchCountryFormChangesAndFilter();
+
+    this.watchStatesFormChangesAndFilter();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
     this.countriesListFiltered = this.countriesList;
+    this.statesListFiltered = this.statesList;
   }
 
   get emailControl(): FormControl {
@@ -34,9 +45,12 @@ export class GeneralInformationsEditComponent implements OnInit, OnChanges {
   get countryControl(): FormControl {
     return this.userForm.get('generalInformations.country') as FormControl;
   }
+  get stateControl(): FormControl {
+    return this.userForm.get('generalInformations.state') as FormControl;
+  }
 
   onCountrySelected(event: MatAutocompleteSelectedEvent) {
-    console.log(event);
+    this.onCountrySelectedEmitt.emit(event.option.value);
   }
 
   //método bind recebe a classe como parametro e faz a referencia com a classe
@@ -46,6 +60,17 @@ export class GeneralInformationsEditComponent implements OnInit, OnChanges {
       this.filterCountriesList.bind(this)
     );
   }
+
+  private watchStatesFormChangesAndFilter() {
+    this.stateControl.valueChanges.subscribe(this.filterStatesList.bind(this));
+  }
+
+  private filterStatesList(searchTerm: string) {
+      this.statesListFiltered = this.statesList.filter((state) =>
+        state.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+      );
+  }
+
   //Resultado do filtro vou guardar em uma nova lista filtrada
   private filterCountriesList(searchTerm: string) {
     this.countriesListFiltered = this.countriesList.filter((country) =>
