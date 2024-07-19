@@ -51,14 +51,17 @@
         <mat-radio-group
           class="w-full flex flex-col sm:flex-row sm:justify-between" formControlName="maritaLStatus"
         >
-          <mat-radio-button [value]="1">Solteiro</mat-radio-button>
-          <mat-radio-button [value]="2">Casado</mat-radio-button>
-          <mat-radio-button [value]="3">Divorciado</mat-radio-button>
+          <mat-radio-button
+          *ngFor="let maritalStatusObj of maritalStatusArray"
+          [value]="maritalStatusObj.code"
+          >{{ maritalStatusObj.description }}</mat-radio-button>
+
         </mat-radio-group>
       </div>
       <mat-form-field class="w-full">
         <mat-label>Renda Mensal:</mat-label>
-        <input matInput placeholder="R$ 5000,00" formControlName="monthlyIncome" />
+        <span matTextPrefix *ngIf="monthlyIncome.value">R$</span>
+        <input #monthlyIncome matInput placeholder="R$ 5000,00" formControlName="monthlyIncome" mask="separator.2" thousandSeparator="." decimalSeparator=","/>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Data de Nascimento:</mat-label>

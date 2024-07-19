@@ -1,3 +1,4 @@
+import { maritalStatusArray } from './../../utils/marital-status-description-map';
 import {
   Component,
   Input,
@@ -37,6 +38,10 @@ export class GeneralInformationsEditComponent implements OnInit, OnChanges {
     console.log(changes);
     this.countriesListFiltered = this.countriesList;
     this.statesListFiltered = this.statesList;
+  }
+
+  get maritalStatusArray() {
+    return maritalStatusArray;
   }
 
   get emailControl(): FormControl {
