@@ -72,4 +72,8 @@ export class UserInformationsContainerComponent
         this.countriesList = countriesList;
       });
   }
+
+  mostrarUserForm() {
+    console.log('userForm', this.userForm);
+  }
 }
