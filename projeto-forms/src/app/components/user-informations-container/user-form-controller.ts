@@ -6,6 +6,8 @@ import { AddressList } from "../../types/address-list";
 import { state } from "@angular/animations";
 import { DependentsList } from "../../types/dependents-list";
 import { convertPtBrDateToDateObj } from "../../utils/convert-pt-br-date-to-date-obj";
+import { preparePhoneList } from "../../utils/prepare-phone-list";
+import { PhoneTypeEnum } from "../../enums/phone-type.enum";
 
 export class UserFormController {
   userForm!: FormGroup;
@@ -88,16 +90,28 @@ export class UserFormController {
   }
 
   private fullFillPhoneList(userPhoneList: PhoneList) {
-    userPhoneList.forEach((phone) => {
+    preparePhoneList(userPhoneList, false, (phone) => {
+      const phoneValidators = phone.type === PhoneTypeEnum.EMERGENCY ? [] : [Validators.required];
       this.phoneList.push(
         this._fb.group({
-          type: [phone.type, Validators.required],
-          areaCode: [phone.areaCode, Validators.required],
-          internationalCode: [phone.internationalCode, Validators.required],
-          number: [phone.number, Validators.required],
+          type: [phone.type],
+          typeDescription: [phone.typeDescription],
+          number: [phone.phoneNumber, phoneValidators],
         })
       );
     });
+    console.log('this.phoneList', this.phoneList);
+
+    // userPhoneList.forEach((phone) => {
+    //   this.phoneList.push(
+    //     this._fb.group({
+    //       type: [phone.type, Validators.required],
+    //       areaCode: [phone.areaCode, Validators.required],
+    //       internationalCode: [phone.internationalCode, Validators.required],
+    //       number: [phone.number, Validators.required],
+    //     })
+    //   );
+    // });
   }
 
   private fullFillGeneralInformations(user: IUser) {
