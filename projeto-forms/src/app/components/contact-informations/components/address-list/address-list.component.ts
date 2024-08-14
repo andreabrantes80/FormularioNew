@@ -1,9 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { AddressTypeEnum } from '../../../../enums/address-type.enum';
 import { IAddressToDisplay } from '../../../../interfaces/address-to-display.interface';
-import { IAddress } from '../../../../interfaces/user/address.interface';
 import { AddressList } from '../../../../types/address-list';
-import { addressTypeDescriptionMap } from '../../../../utils/address-type-description-map';
+import { prepareAddressList } from '../../../../utils/prepare-address-list';
 
 @Component({
   selector: 'app-address-list',
@@ -12,6 +10,7 @@ import { addressTypeDescriptionMap } from '../../../../utils/address-type-descri
 })
 export class AddressListComponent implements OnChanges {
   addressListToDisplay: IAddressToDisplay[] = [];
+
   @Input() userAddressList: AddressList | undefined = [];
 
   ngOnChanges(changes: SimpleChanges) {
@@ -26,39 +25,11 @@ export class AddressListComponent implements OnChanges {
   prepareAddressListToDisplay() {
     this.addressListToDisplay = [];
 
-    Object.keys(addressTypeDescriptionMap)
-      .map(Number)
-      .forEach((addressType: number) => {
-        const addressFound = this.userAddressList?.find(
-          (userAddress) => userAddress.type === addressType
-        );
+    const originalAddressList = this.userAddressList && this.userAddressList.length > 0 ? this.userAddressList : [];
 
-        this.addressListToDisplay.push(
-          this.returnAddressToDisplay(addressFound, addressType)
-        );
-      });
-  }
-  returnAddressToDisplay(
-    address: IAddress | undefined,
-    addressType: number
-  ): IAddressToDisplay {
-    if (!address) {
-      return {
-        typeDescription:
-          addressTypeDescriptionMap[addressType as AddressTypeEnum],
-        type: addressType,
-        street: '-',
-        complement: '-',
-        country: '-',
-        state: '-',
-        city: '-',
-      };
-    }
+    prepareAddressList(originalAddressList, true, (address) => {
+      this.addressListToDisplay.push(address);
+    });
 
-    return {
-      typeDescription:
-        addressTypeDescriptionMap[addressType as AddressTypeEnum],
-      ...address,
-    };
   }
 }
