@@ -1,13 +1,14 @@
-import { inject } from "@angular/core";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { IUser } from "../../interfaces/user/user-interface";
-import { PhoneList } from "../../types/phone-list";
-import { AddressList } from "../../types/address-list";
-import { state } from "@angular/animations";
-import { DependentsList } from "../../types/dependents-list";
-import { convertPtBrDateToDateObj } from "../../utils/convert-pt-br-date-to-date-obj";
-import { preparePhoneList } from "../../utils/prepare-phone-list";
-import { PhoneTypeEnum } from "../../enums/phone-type.enum";
+import { inject } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IUser } from '../../interfaces/user/user-interface';
+import { PhoneList } from '../../types/phone-list';
+import { AddressList } from '../../types/address-list';
+import { state } from '@angular/animations';
+import { DependentsList } from '../../types/dependents-list';
+import { convertPtBrDateToDateObj } from '../../utils/convert-pt-br-date-to-date-obj';
+import { preparePhoneList } from '../../utils/prepare-phone-list';
+import { PhoneTypeEnum } from '../../enums/phone-type.enum';
+import { prepareAddressList } from '../../utils/prepare-address-list';
 
 export class UserFormController {
   userForm!: FormGroup;
@@ -75,23 +76,29 @@ export class UserFormController {
   }
 
   private fullFillAddressList(userAddressList: AddressList) {
-    userAddressList.forEach((address) => {
+    prepareAddressList(userAddressList, false, (address) => {
       this.addressList.push(
         this._fb.group({
-          type: [address.type, Validators.required],
-          street: [address.street, Validators.required],
-          complement: [address.complement, Validators.required],
-          country: [address.country, Validators.required],
-          state: [address.state, Validators.required],
-          city: [address.city, Validators.required],
+          type: [address.type],
+          typeDescription: [{ value: address.typeDescription, disabled: true }],
+          street: [address.street],
+          complement: [address.complement],
+          country: [address.country],
+          state: [address.state],
+          city: [address.city],
         })
       );
     });
+
+    console.log(' this.addressList', this.addressList);
+
+
   }
 
   private fullFillPhoneList(userPhoneList: PhoneList) {
     preparePhoneList(userPhoneList, false, (phone) => {
-      const phoneValidators = phone.type === PhoneTypeEnum.EMERGENCY ? [] : [Validators.required];
+      const phoneValidators =
+        phone.type === PhoneTypeEnum.EMERGENCY ? [] : [Validators.required];
       this.phoneList.push(
         this._fb.group({
           type: [phone.type],
@@ -117,7 +124,7 @@ export class UserFormController {
   private fullFillGeneralInformations(user: IUser) {
     const newUser = {
       ...user,
-      birthDate: convertPtBrDateToDateObj(user.birthDate)
+      birthDate: convertPtBrDateToDateObj(user.birthDate),
     };
     this.generalInformations.patchValue(newUser);
   }
@@ -126,7 +133,10 @@ export class UserFormController {
     this.userForm = this._fb.group({
       generalInformations: this._fb.group({
         name: ['', Validators.required],
-        email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
+        email: [
+          '',
+          [Validators.required, Validators.pattern(this.emailPattern)],
+        ],
         country: ['', Validators.required],
         state: ['', Validators.required],
         maritalStatus: [null, Validators.required],

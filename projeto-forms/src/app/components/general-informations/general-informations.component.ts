@@ -7,6 +7,7 @@ import { IUser } from '../../interfaces/user/user-interface';
   templateUrl: './general-informations.component.html',
   styleUrls: ['./general-informations.component.scss']
 })
+
 export class GeneralInformationsComponent {
   @Input() user: IUser | undefined = {} as IUser;
 }
