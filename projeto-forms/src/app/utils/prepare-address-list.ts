@@ -1,21 +1,17 @@
-import { AddressTypeEnum } from "../enums/address-type.enum";
-import { IAddressToDisplay } from "../interfaces/address-to-display.interface";
-import { IAddress } from "../interfaces/user/address.interface";
-import { AddressList } from "../types/address-list";
-import { addressTypeDescriptionMap } from "./address-type-description-map";
+import { AddressTypeEnum } from '../enums/address-type.enum';
+import { IAddressToDisplay } from '../interfaces/address-to-display.interface';
+import { IAddress } from '../interfaces/user/address.interface';
+import { AddressList } from '../types/address-list';
+import { addressTypeDescriptionMap } from './address-type-description-map';
 
-
-
-
-export const prepareAddressList = (originalUserAddressList: AddressList, isDisplayAddress: boolean, callback: (address: IAddressToDisplay) => void) => {
-
-
-
-
+export const prepareAddressList = (
+  originalUserAddressList: AddressList,
+  isDisplayAddress: boolean,
+  callback: (address: IAddressToDisplay) => void
+) => {
   Object.keys(addressTypeDescriptionMap)
     .map(Number)
     .forEach((addressType: number) => {
-
       const addressFound = originalUserAddressList.find(
         (userAddress) => userAddress.type === addressType
       );
@@ -31,59 +27,51 @@ export const prepareAddressList = (originalUserAddressList: AddressList, isDispl
       callback({
         ...address,
       });
-
     });
+};
 
+const returnAddressToEdit = (
+  address: IAddress | undefined,
+  addressType: number
+): IAddressToDisplay => {
+  if (!address) {
+    return {
+      typeDescription:
+        addressTypeDescriptionMap[addressType as AddressTypeEnum],
+      type: addressType,
+      street: '',
+      complement: '',
+      country: '',
+      state: '',
+      city: '',
+    };
+  }
+
+  return {
+    typeDescription: addressTypeDescriptionMap[addressType as AddressTypeEnum],
+    ...address,
+  };
+};
 
 const returnAddressToDisplay = (
-    address: IAddress | undefined,
-    addressType: number
-  ): IAddressToDisplay =>  {
-    if (!address) {
-      return {
-        typeDescription:
-          addressTypeDescriptionMap[addressType as AddressTypeEnum],
-        type: addressType,
-        street: '-',
-        complement: '-',
-        country: '-',
-        state: '-',
-        city: '-',
-      };
-    }
-
+  address: IAddress | undefined,
+  addressType: number
+): IAddressToDisplay => {
+  if (!address) {
     return {
       typeDescription:
         addressTypeDescriptionMap[addressType as AddressTypeEnum],
-      ...address,
+      type: addressType,
+      street: '-',
+      complement: '-',
+      country: '-',
+      state: '-',
+      city: '-',
     };
   }
 
-  
-const returnAddressToEdit = (
-    address: IAddress | undefined,
-    addressType: number
-  ): IAddressToDisplay =>  {
-    if (!address) {
-      return {
-        typeDescription:
-          addressTypeDescriptionMap[addressType as AddressTypeEnum],
-        type: addressType,
-        street: '',
-        complement: '',
-        country: '',
-        state: '',
-        city: '',
-      };
-    }
-
-    return {
-      typeDescription:
-        addressTypeDescriptionMap[addressType as AddressTypeEnum],
-      ...address,
-    };
-  }
-
-
-
-}
+  return {
+    typeDescription: addressTypeDescriptionMap[addressType as AddressTypeEnum],
+    ...address,
+  };
+};
